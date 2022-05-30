@@ -1,22 +1,14 @@
 module Modules.Cell where 
-
-type Region = Int
+type RegionIndex = Int
 type Value = Int
---Regiao no qual pertence, valor, acima, abaixo, esquerda, direita
-type Cell = (Region, Value, Cell, Cell, Cell, Cell)
-
-getRegion :: Cell -> Region
-getRegion (region, v, a, b, l, r) = region
-
-setRegion :: Cell -> Int -> Cell
-setRegion (_, v, a, b, l, r) region = (region, v, a, b, l, r)
+type Cell  = (RegionIndex, Value)
 
 getValue :: Cell -> Value
-getValue (region, v, a, b, l, r) = v
+getValue (_, v) = v
 
-setValue :: Cell -> Int -> Cell
-setValue (region, _, a, b, l, r) v = (region, v, a, b, l, r)
+getRegion :: Cell -> RegionIndex
+getRegion (r, _) = r
 
-getAbove :: Cell -> Cell
-getAbove (region, v, a, b, l, r) = a
-
+getPrintableValue :: Cell -> String
+getPrintableValue (r, 0) = " "
+getPrintableValue (r, v) = show v

@@ -1,6 +1,7 @@
 import Modules.Grid
-import Modules.Cell
-
+import Modules.GridResolver
 
 main = do
-    print (getGridSize(grid 0))
+    printGrid (grid 0)
+    putStr (getPrintablePossibleValues (buildPossibleValues (grid 0)))
+    print (calculateRegionsListSize (getGridAsList (grid 0)))
