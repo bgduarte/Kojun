@@ -1,5 +1,6 @@
 module Modules.Cell where 
-type RegionIndex = Int
+
+type RegionIndex = Int    
 type Value = Int
 type Cell  = (RegionIndex, Value)
 

@@ -35,6 +35,7 @@ getLenghtGrid (x:xs) = 1 + getLenghtGrid xs
 getFromGrid :: Int -> Int -> Grid -> (RegionIndex, Value)
 getFromGrid x y grid = grid !! x !! y
 
+
 -- cria as linhas que reprentam a extrimadade da grid
 makeExtremeLine :: Int -> String
 makeExtremeLine 0 = "--"
@@ -64,7 +65,7 @@ makeLineSpace' (x:xs) (y:ys) n len =
 
 -- calcula o caracter que fica entre as celulas baseado nas regioes
 calculateCharForLine :: Cell -> Cell -> String
-calculateCharForLine x y = if getRegion(x) == getRegion(y) then ": " else "| "
+calculateCharForLine x y = if getRegion(x) == getRegion(y) then "` " else "| "
 
 -- calcula a linha que representa o valor e regios das celulas
 getPrintableRow :: Row -> Int -> Int -> Int -> String
@@ -96,4 +97,21 @@ getPrintableGrid grid = getPrintableGrid' grid 0 0 ((getLenghtGrid grid))
 printGrid :: Grid -> IO ()
 printGrid grid = do 
     putStr (getPrintableGrid grid)
+
+generateEmptyGrid :: Int -> Grid
+generateEmptyGrid size = generateEmptyGrid' size 0 0
+
+generateEmptyGrid' :: Int -> Int -> Int -> Grid
+generateEmptyGrid' size x y =
+    if x < size then
+        []:generateEmptyGrid' size (x+1) y
+    else
+        []
+
+generateEmptyRoll :: Int -> Int -> Int -> Row
+generateEmptyRoll size x y = 
+    if y < size then 
+       (-1,0) : generateEmptyRoll size x (y+1)
+    else
+        []
 
