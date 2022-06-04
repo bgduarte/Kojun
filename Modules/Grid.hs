@@ -1,5 +1,6 @@
-{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
-{-# HLINT ignore "Use guards" #-}
+-- Contem o tipo grid e todas as declaracoes de grid
+-- Tambem possui uma funcao de calcular o seu tamanho
+-- e uma seria de funcoes parar imprimir a grid
 module Modules.Grid where
 import Modules.Cell
 
@@ -30,11 +31,39 @@ getLenghtGrid :: Grid -> Int
 getLenghtGrid [] = 0
 getLenghtGrid (x:xs) = 1 + getLenghtGrid xs
 
+-- ========================================================================
+-- Funcoes que printam uma dada grid
+-- ========================================================================
+-- funcao principal que printa a grid
+printGrid :: Grid -> IO ()
+printGrid grid = do 
+    putStr (getPrintableGrid grid)
 
--- retorna um elento da grid
-getFromGrid :: Int -> Int -> Grid -> (RegionIndex, Value)
-getFromGrid x y grid = grid !! x !! y
+-- retorna uma string printavel da grid
+getPrintableGrid :: Grid -> String
+getPrintableGrid grid = getPrintableGrid' grid 0 0 ((getLenghtGrid grid))
 
+-- calcula a string printavel da grid
+getPrintableGrid' :: Grid -> Int -> Int -> Int -> String
+getPrintableGrid' [] _ _ _ = ""
+getPrintableGrid' (h:tail) x y len= 
+    if x == 0 then 
+        makeExtremeLine (len) ++ "\n" ++ getPrintableGrid' (h:tail) (x+1) 0 len
+    else if x < len then
+        getPrintableRow h x y len ++ makeLineSpace h (head tail) len ++ getPrintableGrid' tail (x+1) 0 len
+    else 
+        getPrintableRow h x y len ++ "\n" ++ makeExtremeLine (len) ++ "\n"
+
+-- calcula a linha que representa o valor e regios das celulas
+getPrintableRow :: Row -> Int -> Int -> Int -> String
+getPrintableRow [] x y len = ""
+getPrintableRow (h:tail) x y len = 
+    if y == 0 then
+        "| " ++ getPrintableRow (h:tail) x (y+1) len
+    else if y < len then
+        getPrintableValue h ++ calculateCharForLine h (head tail) ++ getPrintableRow tail x (y+1) len
+    else 
+        getPrintableValue h ++ " |"
 
 -- cria as linhas que reprentam a extrimadade da grid
 makeExtremeLine :: Int -> String
@@ -66,52 +95,3 @@ makeLineSpace' (x:xs) (y:ys) n len =
 -- calcula o caracter que fica entre as celulas baseado nas regioes
 calculateCharForLine :: Cell -> Cell -> String
 calculateCharForLine x y = if getRegion(x) == getRegion(y) then "` " else "| "
-
--- calcula a linha que representa o valor e regios das celulas
-getPrintableRow :: Row -> Int -> Int -> Int -> String
-getPrintableRow [] x y len = ""
-getPrintableRow (h:tail) x y len = 
-    if y == 0 then
-        "| " ++ getPrintableRow (h:tail) x (y+1) len
-    else if y < len then
-        getPrintableValue h ++ calculateCharForLine h (head tail) ++ getPrintableRow tail x (y+1) len
-    else 
-        getPrintableValue h ++ " |"
-
--- calcula a string printavel da grid
-getPrintableGrid' :: Grid -> Int -> Int -> Int -> String
-getPrintableGrid' [] _ _ _ = ""
-getPrintableGrid' (h:tail) x y len= 
-    if x == 0 then 
-        makeExtremeLine (len) ++ "\n" ++ getPrintableGrid' (h:tail) (x+1) 0 len
-    else if x < len then
-        getPrintableRow h x y len ++ makeLineSpace h (head tail) len ++ getPrintableGrid' tail (x+1) 0 len
-    else 
-        getPrintableRow h x y len ++ "\n" ++ makeExtremeLine (len) ++ "\n"
-
--- retorna uma string printavel da grid
-getPrintableGrid :: Grid -> String
-getPrintableGrid grid = getPrintableGrid' grid 0 0 ((getLenghtGrid grid))
-
--- printa a grid
-printGrid :: Grid -> IO ()
-printGrid grid = do 
-    putStr (getPrintableGrid grid)
-
-generateEmptyGrid :: Int -> Grid
-generateEmptyGrid size = generateEmptyGrid' size 0 0
-
-generateEmptyGrid' :: Int -> Int -> Int -> Grid
-generateEmptyGrid' size x y =
-    if x < size then
-        []:generateEmptyGrid' size (x+1) y
-    else
-        []
-
-generateEmptyRoll :: Int -> Int -> Int -> Row
-generateEmptyRoll size x y = 
-    if y < size then 
-       (-1,0) : generateEmptyRoll size x (y+1)
-    else
-        []
-
