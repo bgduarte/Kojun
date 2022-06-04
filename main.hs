@@ -8,7 +8,6 @@ import Modules.Solver
 -- Tambem utiliza o modulo regionslist que contem o tipo utilizado para a resolucao e todas as funcoes relacionadas a este
 
 main = do
-    printGrid (grid 0)
-    let grids = solve (grid 0)
+    
+    let grids = solve (grid 1)
     mapM_ printGrid grids
-
